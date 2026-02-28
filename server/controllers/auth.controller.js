@@ -14,6 +14,8 @@ exports.singin = async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({ message: "email and password are required" })
         }
+
+        // email 
         const result = await User.findOne({ email })
         if (!result) {
             return res.status(401).json({
@@ -25,6 +27,8 @@ exports.singin = async (req, res) => {
         if (!result.active) {
             return res.status(401).json({ messsage: "account blocked by admin" })
         }
+
+        // password
         const verify = await bcrypt.compare(password, result.password)
         if (!verify) {
             return res.status(401).json({
@@ -33,6 +37,8 @@ exports.singin = async (req, res) => {
                     : "Invalid Password"
             })
         }
+
+        // token
         const token = jwt.sign({ _id: result._id }, process.env.JWT_KEY, { expiresIn: "1d" })
         res.cookie("TOKEN", token, {
             httpOnly: true,
