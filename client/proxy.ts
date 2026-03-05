@@ -7,7 +7,7 @@ const proxy = (req : NextRequest) => {
     }
     return NextResponse.next()
 }
-
+0
 export const config = {
     matcher : ["/admin/:path*", "/employee/:path*"]
 }
