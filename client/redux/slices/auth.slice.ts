@@ -26,8 +26,14 @@ const authSlice= createSlice({
      
     },
     extraReducers: builder => builder
+        // signin
         .addMatcher(authApi.endpoints.signin.matchFulfilled, (state, { payload }) => {
             state.admin = payload.result
+        })
+
+        //signout
+        .addMatcher(authApi.endpoints.signout.matchFulfilled, (state, { payload }) => {
+            state.admin = null
         })
      
        
