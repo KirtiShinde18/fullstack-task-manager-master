@@ -8,12 +8,22 @@ const { registerTemplate } = require("../email-templates/registerTemplate")
 const { otpTemplate } = require("../email-templates/otpTemplate")
 const { differenceInSeconds } = require("date-fns")
 const { forgetPasswordTemplate } = require("../email-templates/forgetPasswordTemplate")
+const { isEmail, isStrongPassword, isMobilePhone, isEmpty, isJWT } = require("validator")
+
 exports.singin = async (req, res) => {
     try {
         const { email, password } = req.body
         if (!email || !password) {
             return res.status(400).json({ message: "email and password are required" })
         }
+        
+        // validator email
+        if(!isEmail(email)){
+            return res.status(400).json({ message: "invalid email" })
+
+        }
+
+        
 
         // email 
         const result = await User.findOne({ email })
@@ -29,6 +39,13 @@ exports.singin = async (req, res) => {
         }
 
         // password
+
+        // validator password
+        // if(!isStrongPassword(password)){
+        //     return res.status(400).json({ message: "weak password" })
+
+        // }
+
         const verify = await bcrypt.compare(password, result.password)
         if (!verify) {
             return res.status(401).json({
@@ -64,10 +81,24 @@ exports.singin = async (req, res) => {
 exports.registerEmployee = async (req, res) => {
     try {
         // Only Admin can register employee
+        // express validator
         const { name, email, mobile } = req.body
-        if (!name || !email || !mobile) {
+        if (isEmpty(name) || isEmpty(email) || isEmpty(mobile)) {
             return res.status(400).json({ message: "all fields required" })
         }
+        
+        // validator email
+        if(!isEmail(email)){
+            return res.status(400).json({ message: "invalid email" })
+
+        }
+
+        // validator mobile
+        if(!isMobilePhone(mobile, "en-IN")){
+            return res.status(400).json({ message: "invalid mobile" })
+
+        }
+
         const isFound = await User.findOne({ $or: [{ email }, { mobile }] })
         if (isFound) {
             return res.status(401).json({ message: "email/mobile already exist" })
@@ -101,9 +132,14 @@ exports.signout = async (req, res) => {
 exports.sendOTP = async (req, res) => {
     try {
         const { username } = req.body
-        if (!username) {
+        if (isEmpty(username)) {
             return res.status(400).josn({ message: "email/mobile is required" })
         }
+        if(!isEmail(username) && !isMobilePhone(username, "en-IN")){
+            return res.status(400).josn({ message: "invalid email/mobile" })
+
+        }
+
         const result = await User.findOne({ $or: [{ email: username }, { mobile: username }] })
         if (!result) {
             return res.status(400).josn({ message: "email/mobile not registered with us" })
@@ -137,8 +173,12 @@ exports.sendOTP = async (req, res) => {
 exports.verifyOTP = async (req, res) => {
     try {
         const { username, otp } = req.body
-        if (!username || !otp) {
-            return res.status(400).json({ message: "all fields required" })
+        if (isEmpty(username) || isEmpty(otp)) {
+            return res.status(400).josn({ message: "all fields required" })
+        }
+        if(!isEmail(username) && !isMobilePhone(username, "en-IN")){
+            return res.status(400).josn({ message: "invalid email/mobile" })
+
         }
         const result = await User.findOne({ $or: [{ email: username }, { mobile: username }] })
         if (!result) {
@@ -177,9 +217,16 @@ exports.verifyOTP = async (req, res) => {
 exports.forgetPassword = async (req, res) => {
     try {
         const { username } = req.body
-        if (!username) {
+        // validator
+        if (isEmpty(username)) {
             return res.status(400).josn({ message: "email/mobile is required" })
         }
+
+        if(!isEmail(username) && !isMobilePhone(username, "en-IN")){
+            return res.status(400).josn({ message: "invalid email/mobile" })
+
+        }
+
         const result = await User.findOne({ $or: [{ email: username }, { mobile: username }] })
         if (!result) {
             return res.status(400).josn({ message: "email/mobile not registered with us" })
@@ -206,9 +253,14 @@ exports.changePassword = async (req, res) => {
         const { token } = req.query
         const { password } = req.body
 
-        if (!token) {
+        if (isEmpty(token)) {
             return res.status(400).json({ message: "Token Required" })
         }
+
+        if (isJWT(token)) {
+            return res.status(400).json({ message: "Invalid Token" })
+        }
+
         const result = await User.findOne({ accessToken: token })
         if (!result) {
             return res.status(400).json({ message: "Token Not Found" })

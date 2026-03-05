@@ -48,19 +48,18 @@ exports.updateEmployees = async (req , res) => {
 }
 
 // status -> active deactive
-exports.toggleEmployeeStatus = async (req , res) => {
+exports.toggleEmployeeStatus = async (req, res) => {
     try {
-        const {status} = req.body
-        if(typeof status !== "boolean"){
-            return res.status(400).json({message : "status is required"})
+        const { status } = req.body
+        if (typeof status !== "boolean") {
+            return res.status(400).json({ message: "status is required" })
         }
-        const {eid} = req.params
-        await User.findByIdAndUpdate(eid, {active: status}, {runValidators: true})
-        res.status(200).json({message : "employee status update success"})
+        const { eid } = req.params
+        await User.findByIdAndUpdate(eid, { active: status }, { runValidators: true })
+        res.status(200).json({ message: "employee status update success" })
     } catch (error) {
-        console.log(error);
-        res.status(500).json({message : "Unable to status update  employee"})
-        
+        console.log(error)
+        res.status(500).json({ message: "unable to status update employee" })
     }
 }
 
@@ -124,7 +123,8 @@ exports.createTask = async (req , res) => {
 // read 
 exports.readTask = async (req , res) => {
     try {
-        const result = await Task.find()
+        //                                 👇🏻 Left join 
+        const result = await Task.find().populate("employee", "_id name mobile email")
         res.status(200).json({message : "task read success", result})
     } catch (error) {
         console.log(error);
