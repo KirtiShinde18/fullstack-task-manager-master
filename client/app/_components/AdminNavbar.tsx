@@ -41,8 +41,8 @@ const AdminNavbar = () => {
       </div>
 
       {
-        admin && <div className="dropdown" data-bs-toggle="dropdown">
-          <button className='btn btn-light'>Welcome {admin.name}</button>
+        admin && <div className="dropdown" >
+          <button className='btn btn-light' data-bs-toggle="dropdown" >Welcome {admin.name}</button>
           <div className="dropdown-menu">
             <li className='dropdown-item'> <Link className='nav-link' href="/admin/profile">Profile</Link> </li>
             <li className='dropdown-item'> <Link className='nav-link' href="/admin/setting">Setting</Link> </li>

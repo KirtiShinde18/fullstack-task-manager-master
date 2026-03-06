@@ -72,6 +72,7 @@ exports.singin = async (req, res) => {
                 role: result.role,
             }
         })
+        
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: "unable to login" })

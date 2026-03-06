@@ -12,7 +12,9 @@ export const employeeApi = createApi({
     tagTypes: ["todo", "profile"],
     endpoints: (builder) => {
         return {
-            getTodos: builder.query<GET_TODO_RESPONSE, GET_TODO_REQUEST>({
+
+            // get todos 
+            getTodos: builder.query<GET_TODO_RESPONSE, void>({
                 query: () => {
                     return {
                         url: "/todos",
@@ -21,6 +23,8 @@ export const employeeApi = createApi({
                 },
                 providesTags: ["todo"]
             }),
+
+            // updateTodo
             updateTodo: builder.mutation<COMMON_RESPONSE, TOGGLE_TODO_REQUEST>({
                 query: todoData => {
                     return {
@@ -32,6 +36,7 @@ export const employeeApi = createApi({
                 invalidatesTags: ["todo"]
             }),
 
+            // getProfile
             getProfile: builder.query<GET_PROFILE_RESPONSE, void>({
                 query: () => {
                     return {
@@ -41,6 +46,8 @@ export const employeeApi = createApi({
                 },
                 providesTags: ["profile"]
             }),
+
+            // updateProfile
             updateProfile: builder.mutation<COMMON_RESPONSE, UPDATE_PROFILE_REQUEST>({
                 query: profileData => {
                     return {

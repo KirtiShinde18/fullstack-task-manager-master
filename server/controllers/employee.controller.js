@@ -5,7 +5,7 @@ const User = require("../models/User");
 exports.getAllTodos = async ( req , res) => {
     try {
         //                                             👇🏻 from auth.middleware.js protect function (id of logg)
-        const result = await Task.find( { employee: req.user})
+        const result = await Task.find( { employee: req.user}).populate("employee", "name email mobile")
         res.status(200).json({message : "todo fetch success", result})
     } catch (error) {
         console.log(error);
