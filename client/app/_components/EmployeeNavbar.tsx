@@ -9,7 +9,7 @@ import { toast } from 'react-toastify'
 
 const EmployeeNavbar = () => {
 
-  const { admin } = useAppSelector(state => state.auth)
+  const { employee } = useAppSelector(state => state.auth)
   const [logout] = useSignoutMutation()
   const router = useRouter()
   
@@ -42,11 +42,11 @@ const EmployeeNavbar = () => {
       </div>
 
       {
-        admin && <div className="dropdown" >
-          <button className='btn btn-light' data-bs-toggle="dropdown">Welcome {admin.name}</button>
+        employee && <div className="dropdown" >
+          <button className='btn btn-light' data-bs-toggle="dropdown">Welcome {employee.name}</button>
           <div className="dropdown-menu">
+            <li className='dropdown-item'> <Link className='nav-link' href="/employee">Dashboard</Link> </li>
             <li className='dropdown-item'> <Link className='nav-link' href="/employee/profile">Profile</Link> </li>
-            <li className='dropdown-item'> <Link className='nav-link' href="/employee/dashboard">Dashboard</Link> </li>
             <li className='dropdown-item'> <button onClick={handleLogout} className='btn btn-link text-danger'> Logout </button> </li>
           </div>
         </div>

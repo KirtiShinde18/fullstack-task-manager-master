@@ -57,11 +57,20 @@ exports.singin = async (req, res) => {
 
         // token
         const token = jwt.sign({ _id: result._id }, process.env.JWT_KEY, { expiresIn: "1d" })
-        res.cookie("TOKEN", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === PRODUCTION,
-            maxAge: 1000 * 60 * 60 * 24
-        })
+        if(result.role === "admin"){
+            res.cookie("ADMIN", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === PRODUCTION,
+                maxAge: 1000 * 60 * 60 * 24
+            })
+
+        }else{
+            res.cookie("EMPLOYEE", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === PRODUCTION,
+                maxAge: 1000 * 60 * 60 * 24
+            })
+        }
         res.status(200).json({
             message: "login success", result: {
                 name: result.name,
@@ -79,6 +88,7 @@ exports.singin = async (req, res) => {
     }
 }
 
+//===================================  REGISTER EMPOYEE ===================================
 exports.registerEmployee = async (req, res) => {
     try {
         // Only Admin can register employee
@@ -120,9 +130,22 @@ exports.registerEmployee = async (req, res) => {
         res.status(500).json({ message: "unable to register employee" })
     }
 }
-exports.signout = async (req, res) => {
+
+//=================================== SIGNOUT ===================================
+exports.signoutAdmin = async (req, res) => {
     try {
-        res.clearCookie("TOKEN")
+        res.clearCookie("ADMIN")
+        res.status(200).json({ message: "signout success" })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: "unable to signout employee" })
+    }
+}
+
+//=================================== SIGNOUT ===================================
+exports.signoutEmployee = async (req, res) => {
+    try {
+        res.clearCookie("EMPLOYEE")
         res.status(200).json({ message: "signout success" })
     } catch (error) {
         console.log(error)
@@ -171,6 +194,7 @@ exports.sendOTP = async (req, res) => {
     }
 }
 
+//=================================== VERIFY OTP ===================================
 exports.verifyOTP = async (req, res) => {
     try {
         const { username, otp } = req.body
@@ -194,11 +218,20 @@ exports.verifyOTP = async (req, res) => {
             return res.status(400).json({ message: "opt Expired" })
         }
         const token = jwt.sign({ _id: result._id }, process.env.JWT_KEY, { expiresIn: "1d" })
-        res.cookie("TOKEN", token, {
+        if(result.role === "admin"){
+            res.cookie("ADMIN", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === PRODUCTION,
             maxAge: 1000 * 60 * 60 * 24
         })
+        }else {
+            res.cookie("EMPLOYEE", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === PRODUCTION,
+            maxAge: 1000 * 60 * 60 * 24
+        })
+        }
+        
         res.status(200).json({
             message: "login success", result: {
                 name: result.name,
@@ -215,6 +248,7 @@ exports.verifyOTP = async (req, res) => {
     }
 }
 
+//=================================== FORGET PASSWORD ===================================
 exports.forgetPassword = async (req, res) => {
     try {
         const { username } = req.body

@@ -23,7 +23,7 @@ export const authApi = createApi({
                     }
                 },
                 transformResponse : (data: SIGNIN_RESPONSE) => {
-                    setStorage(data)
+                    setStorage(data, data.result.role)
                     return data
                 }
             }),
@@ -39,18 +39,33 @@ export const authApi = createApi({
                 },
             }),
 
-            // signout
+            // signout employee
             signout: builder.mutation<void, void>({
                 query: userData => {
                     return {
-                        url: "/signout",
+                        url: "/signout-employee",
                         method: "POST",
                     }
                 },
                 transformResponse: () => {
-                    removeStorage()
+                    removeStorage("employee")
                 }
             }),
+
+            // signout admin
+            signoutAdmin: builder.mutation<void, void>({
+                query: userData => {
+                    return {
+                        url: "/signout-admin",
+                        method: "POST",
+                    }
+                },
+                transformResponse: () => {
+                    removeStorage("admin")
+                }
+            }),
+
+            
 
             // send Otp
             sendOtp: builder.mutation<SEND_OTP_RESPONSE, SEND_OTP_REQUEST>({
@@ -72,6 +87,10 @@ export const authApi = createApi({
                         body: userData
                     }
                 },
+                transformResponse: (data: VERIFY_OTP_RESPONSE) => {
+                    setStorage(data, data.result.role)
+                    return data
+                }
             }),
             forgetPassword: builder.mutation<FORGET_PASSWORD_RESPONSE, FORGET_PASSWORD_REQUEST>({
                 query: userData => {
@@ -102,6 +121,7 @@ export const {
     useSigninMutation,
     useRegisterEmployeeMutation,
     useSignoutMutation,
+    useSignoutAdminMutation,
     useSendOtpMutation,
     useVerifyOtpMutation,
     useForgetPasswordMutation,

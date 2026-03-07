@@ -27,6 +27,8 @@ export type REGISTER_EMPLOYEE_RESPONSE = {
 // send OTP 
 export type SEND_OTP_REQUEST = {
     username: string,
+    otp: string,
+
 }
 export type SEND_OTP_RESPONSE = {
     message: string
@@ -37,7 +39,15 @@ export type VERIFY_OTP_REQUEST = {
     otp: string,
 }
 export type VERIFY_OTP_RESPONSE = {
-    message: string
+    message: string,
+    result: {
+        name: string,
+        email: string,
+        mobile: string,
+        profilePic: string,
+        _id: string,
+        role: string,
+    }
 }
 
 

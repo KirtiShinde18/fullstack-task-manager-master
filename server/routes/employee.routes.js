@@ -8,7 +8,7 @@ router
     .put("/todo-update/:tid", toggleTodoStatus)
 
     .get("/profile", getProfile)
-    .put("/profile-update/", updateProfile)
+    .put("/profile-update", updateProfile)
     
 
 module.exports = router
